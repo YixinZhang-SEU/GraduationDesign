@@ -1,34 +1,29 @@
-import csv
-import os
-from tqdm import tqdm 
+import matplotlib.pyplot as plt  
+import pandas as pd
+import numpy as np
+  
+index_name=['1', '2', '3', '4', '5', '6', '7', '8', '9']
+df = pd.read_csv('data_process/instances.csv', header=None, names = index_name)  # 替换为你的CSV文件路径  
+  
+# 假设你的CSV文件有两列，分别命名为'column1'和'column2'  
+# 你可以根据需要更改这些列名 
 
-filepath = os.path.abspath('.')
-task_filename = os.path.join(filepath, 'GraduationDesign/data_process/batch_task.csv')
-instance_filename = os.path.join(filepath, 'GraduationDesign/data_process/batch_instance.csv')
+x = df['6']  # 将'column1'列转换为numpy数组  
+y = df['8']  # 将'column2'列转换为numpy数组  
+  
+# 使用polyfit函数进行线性拟合
+coefficients = np.polyfit(x, y, 1)
+p = np.poly1d(coefficients)
 
+# 绘制原始数据散点图和拟合曲线
+plt.scatter(x, y, label='Data')
+plt.plot(x, p(x), color='r', label='Fitted line')
 
-# n = 1000
-# with open(task_filename, 'r') as task_file, open(os.path.join(path, 'GraduationDesign/data_process/task_100.csv'), 'a') as task_w_file:
-#     task_reader = csv.reader(task_file)
-#     task_writer = csv.writer(task_w_file)
-#     for i in tqdm(range(n)):
-#         row = next(task_reader)
-#         task_writer.writerow(row)
-
-job_set = {'j_49', 'j_66', 'j_79', 'j_230', 'j_293', 'j_583', 'j_783'}
-
-with open(task_filename, 'r') as task_r_file, open(instance_filename, 'r') as instance_r_file, open(os.path.join(filepath,'GraduationDesign/data_process/tasks.csv'), 'a') as task_w_file, open(os.path.join(filepath,'GraduationDesign/data_process/instances.csv'), 'w') as instance_w_file:
-    task_reader = csv.reader(task_r_file)
-    instance_reader = csv.reader(instance_r_file)
-    task_writer = csv.writer(task_w_file)
-    instance_writer = csv.writer(instance_w_file)
-
-    # for row in tqdm(task_reader):
-    #     if row[2] in job_set:
-    #         task_writer.writerow(row)
-    # print("===========================")
-
-    for row in tqdm(instance_reader):
-        if row[2] in job_set:
-            instance_writer.writerow(row)
-    print("===========================")
+# 添加图例和标签
+plt.legend()
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Linear Regression')
+  
+# 保存图形  
+plt.savefig('scatter_plot.png')  # 保存为PNG文件
