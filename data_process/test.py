@@ -1,9 +1,13 @@
 import matplotlib.pyplot as plt  
 import pandas as pd
 import numpy as np
-  
+import os
+
+filepath = os.path.abspath('../..')
+task_input_filename = os.path.join(filepath, 'dataset/trace2018/batch_instance.csv')
+
 index_name=['1', '2', '3', '4', '5', '6', '7', '8', '9']
-df = pd.read_csv('data_process/instances.csv', header=None, names = index_name)  # 替换为你的CSV文件路径  
+df = pd.read_csv('instances.csv', header=None, names = index_name)  # 替换为你的CSV文件路径  
   
 # 假设你的CSV文件有两列，分别命名为'column1'和'column2'  
 # 你可以根据需要更改这些列名 
