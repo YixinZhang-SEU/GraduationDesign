@@ -2,9 +2,11 @@ import random
 import csv
 import tasks
 from collections import OrderedDict
+import os
 
-
-wfFile = 'temp_data/wf.csv'
+filepath = os.path.abspath('.')
+wfFile = os.path.join(filepath, 'main_code/dataset/wf.csv')
+taskFile = os.path.join(filepath, 'main_code/dataset/tasks.csv')
 
 def get_wfDict(wfFile):
     wf_dict = {}
@@ -12,7 +14,7 @@ def get_wfDict(wfFile):
         reader = csv.DictReader(rcsv)
         for row in reader:
             value = []
-            value += [row['Deadline'], row['Tasks'], row['Edges']]
+            value += [row['Deadline'], row['Tasks']]
             wf_dict[row['WF_Type']] = value
     return wf_dict
 
@@ -38,7 +40,7 @@ class Workflow:
         self.tasks = OrderedDict()       # 有序字典，所有任务  {任务id, 任务对象obj}
         self.executing_tasks = {}       # {task_id, task(.obj)}
 
-        with open('temp_data/tasks.csv', 'r') as rcsv:
+        with open(taskFile, 'r') as rcsv:
             reader = csv.DictReader(rcsv)
             all_rows = list(reader)
             for row in reversed(all_rows):

@@ -1,8 +1,11 @@
 import csv
 import config
+import os
 
+filepath = os.path.abspath('.')
+filename = os.path.join(filepath, 'main_code/dataset/functions.csv')
 func_dict = {}
-with open('temp_data/functions.csv', 'r') as rcsv:
+with open(filename, 'r') as rcsv:
     reader = csv.DictReader(rcsv)
     for row in reader:
         value = []
@@ -18,7 +21,7 @@ class Function:
         self.cold_st = func_dict[func_type][2]
         self.exec_time = func_dict[func_type][3]
         self.start_time = 0
-        self.finish_time = self.exec_time
+        self.finish_time = func_dict[func_type][3]
         self.belong_server = belong_server
         self.belong_wf = belong_wf
         self.belong_task = belong_task

@@ -2,36 +2,33 @@ import numpy as np
 import csv
 import random
 import workflows
+import os
+
+filepath = os.path.abspath('.')
+filename = os.path.join(filepath, 'main_code/dataset/wf.csv')
 
 # 所有工作流类型
 wf_dict = {}
 wf_types = []
-with open('temp_data/wf.csv', 'r') as rcsv:
+with open(filename, 'r') as rcsv:
     reader = csv.DictReader(rcsv)
     for row in reader:
         value = []
-        value += [row['Deadline'], row['Tasks'], row['Edges']]
+        value += [row['Deadline'], row['Tasks']]
         wf_dict[row['WF_Type']] = value
         wf_types.append(row['WF_Type'])
 
 
 class Server:
-    def __init__(self, server_id, cpu_capacity, mem_capacity, func_types, arrival_rate):
+    def __init__(self, server_id, cpu_capacity, mem_capacity, func_types):
         self.server_id = server_id          # 0表示云服务器， 否则表示边缘服务器编号
         self.cpu_capacity = cpu_capacity    # 当前可用cpu
         self.mem_capacity = mem_capacity    # 当前可用内存       
         self.executing_queue = []   # 执行队列 [func(.obj)]
         self.workflow_queue = {}    # 接收到的工作流队列 {wf_id, wf(.obj)}
-        self.arrival_rate = arrival_rate
-        self.interarrival_time = np.random.exponential(scale=1/arrival_rate)  # 工作流到达间隔时间
         self.func_types = {}                # 缓存的函数列表 {函数类型: 上一次使用时间}，-1表示从未使用过
         for f_type in func_types:
             self.func_types[f_type] = -1
-
-
-    # 重置间隔时间
-    def reset_time(self):
-        self.interarrival_time = np.random.exponential(scale=1/self.arrival_rate)
 
 
     # 接收工作流，解构，把任务拆解成函数，按照任务的拓扑顺序（？）加入到等待队列中

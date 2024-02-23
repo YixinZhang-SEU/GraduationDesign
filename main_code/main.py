@@ -1,11 +1,12 @@
 from clusters import Cluster
 from scheduler import Scheduler
 import config
+import random
 
 # 构造服务器环境
 edge_num = config.EDGE_NUM
 arrival_rate = config.ARRIVAL_RATE
-cluster = Cluster(edge_num, arrival_rate)
+cluster = Cluster(edge_num)
 dists = cluster.dists
 
 scheduler_instance = Scheduler()
@@ -24,12 +25,10 @@ if __name__ == "__main__":
             
             if t <= receive_t:
                 # 模拟工作流到达
-                cluster.server_pool[i].interarrival_time -= 1
-                if cluster.server_pool[i].interarrival_time <= 0:   # 工作流到达
+                if random.random() <= config.ARRIVAL_RATE:   # 工作流到达
                     cluster.server_pool[i].receive_workflow(workflow_id, i, t)   # 接收
                     # print(f"server {i} receives wf at time {t}, the wf_id is {workflow_id}.")
                     workflow_id += 1
-                    cluster.server_pool[i].reset_time()
 
             # 模拟全局运行任务
             # 执行结束的函数弹出服务器的执行队列
@@ -37,8 +36,7 @@ if __name__ == "__main__":
             for func in cluster.server_pool[i].executing_queue:
                 if func.finish_time <= t:       # 函数执行完毕
                     if i != func.belong_server:
-                        func.finish_time += func.funcTransTime(i, dists)
-                        cluster.server_pool[func.belong_server].workflow_queue[func.belong_wf].executing_tasks[func.belong_task].finish_time = func.finish_time
+                        cluster.server_pool[func.belong_server].workflow_queue[func.belong_wf].executing_tasks[func.belong_task].finish_time += func.funcTransTime(i, dists)
                     cluster.server_pool[i].func_types[func.func_type] = t      # 更新镜像最后使用时间
                 else:
                     temp_exec_funcs.append(func)

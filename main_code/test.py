@@ -178,67 +178,68 @@
 # simulation.run_simulation()
 
 
-import heapq
+# import heapq
 
-class EdgeServer:
-    def __init__(self, server_id, resources):
-        self.server_id = server_id
-        self.resources = resources  # 服务器资源信息，例如 CPU、内存等
+# class EdgeServer:
+#     def __init__(self, server_id, resources):
+#         self.server_id = server_id
+#         self.resources = resources  # 服务器资源信息，例如 CPU、内存等
 
-class Edge:
-    def __init__(self, server1, server2, distance):
-        self.server1 = server1
-        self.server2 = server2
-        self.distance = distance
+# class Edge:
+#     def __init__(self, server1, server2, distance):
+#         self.server1 = server1
+#         self.server2 = server2
+#         self.distance = distance
 
-class ShortestPathAlgorithm:
-    def __init__(self, edge_servers, edges):
-        self.edge_servers = edge_servers
-        self.edges = edges
+# class ShortestPathAlgorithm:
+#     def __init__(self, edge_servers, edges):
+#         self.edge_servers = edge_servers
+#         self.edges = edges
 
-    def dijkstra(self, start_server, required_resources):
-        distances = {server: float('inf') for server in self.edge_servers}
-        distances[start_server] = 0
-        heap = [(0, start_server)]
+#     def dijkstra(self, start_server, required_resources):
+#         distances = {server: float('inf') for server in self.edge_servers}
+#         distances[start_server] = 0
+#         heap = [(0, start_server)]
 
-        while heap:
-            current_distance, current_server = heapq.heappop(heap)
+#         while heap:
+#             current_distance, current_server = heapq.heappop(heap)
 
-            if current_distance > distances[current_server]:
-                continue
+#             if current_distance > distances[current_server]:
+#                 continue
 
-            for edge in self.edges:
-                neighbor = edge.server2 if edge.server1 == current_server else edge.server1
-                new_distance = current_distance + edge.distance
+#             for edge in self.edges:
+#                 neighbor = edge.server2 if edge.server1 == current_server else edge.server1
+#                 new_distance = current_distance + edge.distance
 
-                if new_distance < distances[neighbor]:
-                    distances[neighbor] = new_distance
-                    heapq.heappush(heap, (new_distance, neighbor))
+#                 if new_distance < distances[neighbor]:
+#                     distances[neighbor] = new_distance
+#                     heapq.heappush(heap, (new_distance, neighbor))
 
-        # 找到距离最短且有足够资源的服务器
-        candidates = [server for server in self.edge_servers if server.resources >= required_resources]
-        nearest_server = min(candidates, key=lambda server: distances[server])
+#         # 找到距离最短且有足够资源的服务器
+#         candidates = [server for server in self.edge_servers if server.resources >= required_resources]
+#         nearest_server = min(candidates, key=lambda server: distances[server])
 
-        return nearest_server
+#         return nearest_server
 
-# 示例用法
-server1 = EdgeServer(server_id="Server-1", resources=10)
-server2 = EdgeServer(server_id="Server-2", resources=8)
-server3 = EdgeServer(server_id="Server-3", resources=12)
+# # 示例用法
+# server1 = EdgeServer(server_id="Server-1", resources=10)
+# server2 = EdgeServer(server_id="Server-2", resources=8)
+# server3 = EdgeServer(server_id="Server-3", resources=12)
 
-edges = [
-    Edge(server1, server2, distance=5),
-    Edge(server2, server3, distance=7),
-    Edge(server1, server3, distance=10),
-]
+# edges = [
+#     Edge(server1, server2, distance=5),
+#     Edge(server2, server3, distance=7),
+#     Edge(server1, server3, distance=10),
+# ]
 
-edge_servers = [server1, server2, server3]
+# edge_servers = [server1, server2, server3]
 
-algorithm = ShortestPathAlgorithm(edge_servers, edges)
-start_server = server1
-required_resources = 9
+# algorithm = ShortestPathAlgorithm(edge_servers, edges)
+# start_server = server1
+# required_resources = 9
 
-nearest_server = algorithm.dijkstra(start_server, required_resources)
-print("Nearest Server:", nearest_server.server_id)
+# nearest_server = algorithm.dijkstra(start_server, required_resources)
+# print("Nearest Server:", nearest_server.server_id)
+
 
 

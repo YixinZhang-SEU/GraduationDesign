@@ -1,0 +1,8 @@
+WF_Type,Task_id,Predecessor,Successor,Func_types
+WF_1,1,,2,"A"
+WF_1,2,1,6,"A"
+WF_1,3,,4,"A"
+WF_1,4,3,5,"A"
+WF_1,5,4,6,"B"
+WF_1,6,"2,5",7,"C,C,B"
+WF_1,7,6,,"B,D,D"
