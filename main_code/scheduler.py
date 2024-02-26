@@ -28,6 +28,7 @@ class Scheduler:
         or function.start_time - this_server.func_types[function.func_type] >= config.FUNC_EXP_TIME : # 冷启动，否则不用加
             function.start_time += function.cold_st
         function.finish_time += function.start_time
+        cluster.server_pool[esi].func_types[function.func_type] = function.finish_time  # 更新镜像最后使用时间
 
         cluster.server_pool[esi].executing_queue.append(function)    # 加入到服务器执行列表
         cluster.server_pool[esi].cpu_capacity -= function.cpu
@@ -55,7 +56,11 @@ class Scheduler:
         or function.start_time - this_server.func_types[function.func_type] >= config.FUNC_EXP_TIME : # 冷启动，否则不用加
             function.start_time += function.cold_st
         function.finish_time += function.start_time
-        
+        cluster.server_pool[esi].func_types[function.func_type] = function.finish_time      # 更新镜像最后使用时间
+
+        if esi != function.belong_server:
+            cluster.server_pool[function.belong_server].workflow_queue[function.belong_wf].executing_tasks[function.belong_task].finish_time += function.funcTransTime(i, cluster.dists)
+
         cluster.server_pool[esi].executing_queue.append(function)    # 加入到服务器执行列表
         cluster.server_pool[esi].cpu_capacity -= function.cpu
         cluster.server_pool[esi].mem_capacity -= function.mem

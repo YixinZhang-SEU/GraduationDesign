@@ -35,9 +35,9 @@ if __name__ == "__main__":
             temp_exec_funcs = []
             for func in cluster.server_pool[i].executing_queue:
                 if func.finish_time <= t:       # 函数执行完毕
-                    if i != func.belong_server:
-                        cluster.server_pool[func.belong_server].workflow_queue[func.belong_wf].executing_tasks[func.belong_task].finish_time += func.funcTransTime(i, dists)
-                    cluster.server_pool[i].func_types[func.func_type] = t      # 更新镜像最后使用时间
+                    cluster.server_pool[i].cpu_capacity += func.cpu     # 返还资源
+                    cluster.server_pool[i].mem_capacity += func.mem
+                    cluster.server_pool[func.belong_server].workflow_queue[func.belong_wf].executing_tasks[func.belong_task].functions_left -= 1
                 else:
                     temp_exec_funcs.append(func)
             cluster.server_pool[i].executing_queue = temp_exec_funcs
@@ -46,22 +46,20 @@ if __name__ == "__main__":
             for wf in list(cluster.server_pool[i].workflow_queue.values()):
                 # 查看工作流的正在被执行列表
                 temp_list = {}
-                for task in wf.executing_tasks.values():
-                    if task.finish_time <= t:       # task执行完成
+                for task in list(wf.executing_tasks.values()):
+                    if task.isDone() == True:       # task执行完成
                         for child in task.children:
                             cluster.server_pool[i].workflow_queue[child.belong_wf].tasks[child.task_id].predecessors_left -= 1    # 通知后继节点
                         cluster.server_pool[i].workflow_queue[wf.wf_id].tasks_left -= 1
-                    else:
-                        temp_list.append(task)     # 尚未完成的task
-                cluster.server_pool[i].workflow_queue[wf.wf_id].executing_tasks = temp_list
+                        cluster.server_pool[i].workflow_queue[wf.wf_id].executing_tasks.pop(task.task_id)
                         
                 # 查看工作流的任务列表
                 while cluster.server_pool[i].workflow_queue[wf.wf_id].tasks and list(cluster.server_pool[i].workflow_queue[wf.wf_id].tasks.values())[0].isOK():    # 任务可以开始执行
                     task = list(wf.tasks.values())[0]
                     # print(f"===={cluster.server_pool[task.belong_server].workflow_queue[task.belong_wf]}")
                     cluster.server_pool[i].workflow_queue[task.belong_wf].tasks[task.task_id].changeStartTime(t)
-                    scheduler_instance.schedule(task, i, t, cluster)        # 调度器
                     cluster.server_pool[i].workflow_queue[wf.wf_id].executing_tasks[task.task_id] = cluster.server_pool[task.belong_server].workflow_queue[task.belong_wf].tasks[task.task_id]
+                    scheduler_instance.schedule(task, i, t, cluster)        # 调度器
                     cluster.server_pool[i].workflow_queue[wf.wf_id].tasks.popitem(last=False)[1]
                 # print(f"Time {t} tasks of wf {wf.wf_type} are {[task.task_id for task in wf.tasks]}.")
 

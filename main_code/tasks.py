@@ -25,8 +25,9 @@ class Task(object):
         temp = functions.split(',')
         for func_type in temp:
             self.functions[func_id] = F.Function(func_type, self.belong_server, self.belong_wf, self.task_id)
+            func_id += 1
 
-        self.functions_left = len(functions)        # 该任务的函数剩余未完成数量
+        self.functions_left = len(self.functions)        # 该任务的函数剩余未完成数量
 
         
     # 判断该任务是否可以开始运行
