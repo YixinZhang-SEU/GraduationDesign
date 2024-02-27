@@ -3,10 +3,10 @@ import csv
 import tasks
 from collections import OrderedDict
 import os
+import config
 
-filepath = os.path.abspath('.')
-wfFile = os.path.join(filepath, 'main_code/dataset/wf.csv')
-taskFile = os.path.join(filepath, 'main_code/dataset/tasks.csv')
+wfFile = os.path.join(config.REQ_PATH, 'wf.csv')
+taskFile = os.path.join(config.REQ_PATH, 'tasks.csv')
 
 def get_wfDict(wfFile):
     wf_dict = {}

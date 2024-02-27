@@ -3,9 +3,9 @@ import csv
 import random
 import workflows
 import os
+import config
 
-filepath = os.path.abspath('.')
-filename = os.path.join(filepath, 'main_code/dataset/wf.csv')
+filename = os.path.join(config.REQ_PATH, 'wf.csv')
 
 # 所有工作流类型
 wf_dict = {}

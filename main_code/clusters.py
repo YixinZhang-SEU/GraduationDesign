@@ -2,10 +2,10 @@ import servers
 import pandas as pd
 import random
 import os
+import config
 
-filepath = os.path.abspath('.')
-es_filename = os.path.join(filepath, 'main_code/data/edge servers/server-dist.csv')
-func_filename = os.path.join(filepath, 'main_code/dataset/functions.csv')
+es_filename = os.path.join(config.ES_PATH, 'server-dist.csv')
+func_filename = os.path.join(config.REQ_PATH, 'functions.csv')
 
 
 class Cluster:

@@ -2,8 +2,7 @@ import csv
 import config
 import os
 
-filepath = os.path.abspath('.')
-filename = os.path.join(filepath, 'main_code/dataset/functions.csv')
+filename = os.path.join(config.REQ_PATH, 'functions.csv')
 func_dict = {}
 with open(filename, 'r') as rcsv:
     reader = csv.DictReader(rcsv)
