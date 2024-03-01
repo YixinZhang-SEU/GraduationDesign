@@ -10,9 +10,15 @@ class Scheduler:
             isMemOk = (func.mem <= this_server.mem_capacity)
             isTypeOk = (func.func_type in this_server.func_types.keys())
             if isCpuOk and isMemOk and isTypeOk:        # 资源、缓存都有：本地立即执行
-                self.LocalExecution(func, arrival_server_id, cluster)
+                esi = self.LocalExecution(func, arrival_server_id, cluster)
             else:
-                self.RemoteExecution(func, cluster)
+                esi = self.RemoteExecution(func, cluster)
+
+            # 占用相关资源
+            cluster.server_pool[esi].executing_queue.append(func)    # 加入到服务器执行列表
+            cluster.server_pool[esi].cpu_capacity -= func.cpu
+            cluster.server_pool[esi].mem_capacity -= func.mem
+                
             # elif isTypeOk and (isCpuOk is False or isMemOk is False):
             #     self.RemoteExecution(func, cluster)
             # else:
@@ -24,15 +30,12 @@ class Scheduler:
     def LocalExecution(self, function, exec_server_id, cluster):
         esi = exec_server_id
         this_server = cluster.server_pool[esi]
-        if this_server.func_types[function.func_type] == -1 \
-        or function.start_time - this_server.func_types[function.func_type] >= config.FUNC_EXP_TIME : # 冷启动，否则不用加
+        if self.isColdst(function, this_server) == True : # 冷启动，否则不用加
             function.start_time += function.cold_st
         function.finish_time += function.start_time
         cluster.server_pool[esi].func_types[function.func_type] = function.finish_time  # 更新镜像最后使用时间
 
-        cluster.server_pool[esi].executing_queue.append(function)    # 加入到服务器执行列表
-        cluster.server_pool[esi].cpu_capacity -= function.cpu
-        cluster.server_pool[esi].mem_capacity -= function.mem
+        return esi
     
 
     # 卸载到其他服务器
@@ -52,19 +55,24 @@ class Scheduler:
         function.start_time += function.funcTransTime(exec_server, cluster.dists)
         esi = exec_server
         this_server = cluster.server_pool[esi]
-        if this_server.func_types[function.func_type] == -1 \
-        or function.start_time - this_server.func_types[function.func_type] >= config.FUNC_EXP_TIME : # 冷启动，否则不用加
-            function.start_time += function.cold_st
+        if self.isColdst(function, this_server) == True: # 冷启动，否则不用加
+            function.start_time += function.cold_st 
         function.finish_time += function.start_time
         cluster.server_pool[esi].func_types[function.func_type] = function.finish_time      # 更新镜像最后使用时间
 
         if esi != function.belong_server:
             cluster.server_pool[function.belong_server].workflow_queue[function.belong_wf].executing_tasks[function.belong_task].finish_time += function.funcTransTime(i, cluster.dists)
 
-        cluster.server_pool[esi].executing_queue.append(function)    # 加入到服务器执行列表
-        cluster.server_pool[esi].cpu_capacity -= function.cpu
-        cluster.server_pool[esi].mem_capacity -= function.mem
+        return esi
 
+
+    # 查看函数镜像是否需要冷启动
+    def isColdst(self, function, exec_server):
+        # 镜像缓存从未被使用过，或曾经用过但处在休眠期
+        if exec_server.func_types[function.func_type] == -1 \
+        or function.start_time - exec_server.func_types[function.func_type] >= config.FUNC_EXP_TIME:
+            return True
+        return False
 
 
     # # 卸载到云服务器

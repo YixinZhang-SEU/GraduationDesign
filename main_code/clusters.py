@@ -4,7 +4,7 @@ import random
 import os
 import config
 
-es_filename = os.path.join(config.ES_PATH, 'server-dist.csv')
+es_filename = os.path.join(config.ES_PATH, 'dists.csv')
 func_filename = os.path.join(config.REQ_PATH, 'functions.csv')
 
 

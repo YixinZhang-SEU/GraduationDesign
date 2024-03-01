@@ -24,17 +24,7 @@ class Function:
         self.belong_server = belong_server
         self.belong_wf = belong_wf
         self.belong_task = belong_task
-
-
-    # def __hash__(self):  
-    #     return hash((self.belong_wf, self.belong_task))  
-
-
-    # def __eq__(self, other):  
-    #     if isinstance(other, Function):  
-    #         return self.belong_wf == other.belong_wf and self.belong_task == other.belong_task
-    #     return False
-    
+            
 
     # 函数单程传输时间，加到finish_time中
     # 传输时间 + 传播时间 = 数据量/带宽 + 距离/传播速度
