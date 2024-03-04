@@ -9,16 +9,16 @@ class Scheduler:
             isCpuOk = (func.cpu <= this_server.cpu_capacity)
             isMemOk = (func.mem <= this_server.mem_capacity)
             isTypeOk = (func.func_type in this_server.func_types.keys())
-            if isCpuOk and isMemOk and isTypeOk:        # 资源、缓存都有：本地立即执行
+            if isCpuOk and isMemOk and isTypeOk:        # 本地资源、缓存都有：本地立即执行
                 esi = self.LocalExecution(func, arrival_server_id, cluster)
-            else:
+            else :
                 esi = self.RemoteExecution(func, cluster)
 
             # 占用相关资源
             cluster.server_pool[esi].executing_queue.append(func)    # 加入到服务器执行列表
             cluster.server_pool[esi].cpu_capacity -= func.cpu
             cluster.server_pool[esi].mem_capacity -= func.mem
-                
+            
             # elif isTypeOk and (isCpuOk is False or isMemOk is False):
             #     self.RemoteExecution(func, cluster)
             # else:
@@ -66,7 +66,7 @@ class Scheduler:
         return esi
 
 
-    # 查看函数镜像是否需要冷启动
+    # 检查函数镜像是否需要冷启动
     def isColdst(self, function, exec_server):
         # 镜像缓存从未被使用过，或曾经用过但处在休眠期
         if exec_server.func_types[function.func_type] == -1 \

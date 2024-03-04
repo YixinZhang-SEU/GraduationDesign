@@ -240,6 +240,62 @@
 
 # nearest_server = algorithm.dijkstra(start_server, required_resources)
 # print("Nearest Server:", nearest_server.server_id)
+# import numpy as np  
 
+  
 
+# # 设定参数  
+
+# num_servers = 10  # 服务器数量  
+
+# time_slot = 20  # 时间槽长度（秒）  
+
+# arrival_rate = 5  # 工作流到达率（假设每个服务器每秒到达1个工作流）  
+
+# # lambda_value = arrival_rate * time_slot  # 泊松分布的参数λ  
+
+  
+
+# # 初始化服务器的工作流数量列表  
+
+# workflows_per_server = [0] * num_servers  
+
+  
+
+# # 在每个时间槽内为每台服务器生成符合泊松分布的工作流数量  
+
+# for _ in range(time_slot):  
+
+#     # 为每台服务器生成工作流数量  
+
+#     workflows = np.random.poisson(arrival_rate, num_servers)  
+
+#     print(workflows)
+
+#     # 将生成的工作流数量加到对应服务器的计数上  
+
+#     for i, count in enumerate(workflows):  
+
+#         workflows_per_server[i] += count  
+
+  
+
+# # 打印每台服务器的工作流数量  
+
+# for i, count in enumerate(workflows_per_server):  
+
+#     print(f"Server {i+1}: {count} workflows arrived")  
+
+import os
+import csv
+import random
+import config
+import pandas as pd
+import json
+
+server_wf_path = os.path.abspath('./main_code/dataset/server_wfs.csv')
+df = pd.read_csv(server_wf_path, header=None)
+t = 1
+i = 2
+print(isinstance(df.iloc[t, i], str))
 

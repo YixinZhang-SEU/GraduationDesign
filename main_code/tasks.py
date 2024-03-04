@@ -1,17 +1,35 @@
+import os
+import csv
+import config
+import random
 import functions as F
 
 
 
+
+functionFile = os.path.abspath('./data_process/instance_filtered.csv')
+funcDict = {}
+with open(functionFile, 'r') as read_func:
+    reader = csv.reader(read_func)
+    next(reader)
+    for row in reader:
+        if row[0] not in funcDict.keys():
+            funcDict[row[0]] = {}
+        if row[1] not in funcDict[row[0]].keys():
+            funcDict[row[0]][row[1]] = []
+        funcDict[row[0]][row[1]].append([row[2], row[3], row[4], random.choice(config.FUNC_TYPES)])
+
+
 class Task(object):
 
-    def __init__(self, belong_server, belong_wf, task_id, functions, children, parents):
+    def __init__(self, belong_server, wf_type, belong_wf, task_id, children, parents):
         self.belong_server = belong_server      # 该任务隶属的服务器
         self.belong_wf = belong_wf              # 隶属工作流
         self.task_id = task_id  # 该任务编号
         self.functions = {}       # 该任务拆分成的函数 {func_id, func(.obj)}
         self.children = children                    # 该任务的后继
-        self.parents = parents.split(',')           # 该任务的前驱
-        if self.parents[0] == '':
+        self.parents = parents.split()           # 该任务的前驱
+        if len(self.parents) == 0:
             self.predecessors_left = 0      # 该任务的前驱剩余未完成的数量
         else:
             self.predecessors_left = len(self.parents)
@@ -22,9 +40,8 @@ class Task(object):
 
         # 将函数列表的元素转化成函数类对象
         func_id = 0
-        temp = functions.split(',')
-        for func_type in temp:
-            self.functions[func_id] = F.Function(func_type, self.belong_server, self.belong_wf, self.task_id)
+        for func_list in funcDict[wf_type][task_id]:
+            self.functions[func_id] = F.Function(self.belong_server, self.belong_wf, self.task_id, func_list[3], func_list[0], func_list[1], func_list[2])
             func_id += 1
 
         self.functions_left = len(self.functions)        # 该任务的函数剩余未完成数量

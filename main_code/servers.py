@@ -32,8 +32,8 @@ class Server:
 
 
     # 接收工作流，解构，把任务拆解成函数，按照任务的拓扑顺序（？）加入到等待队列中
-    def receive_workflow(self, workflow_id, server_id, arrival_time):
-        this_wf = workflows.Workflow(workflow_id, server_id, arrival_time)
+    def receive_workflow(self, workflow_id, server_id, arrival_time, wf_type):
+        this_wf = workflows.Workflow(workflow_id, server_id, arrival_time, wf_type)
         self.workflow_queue[workflow_id] = this_wf    # 工作流整体添加到服务器的工作流队列中
         # print(f"wf rec, workflow_type is {self.workflow_queue[workflow_id].wf_type}") #, task_id_0 is {this_wf.tasks[0]} task_0_parents are {this_wf.tasks[0].isOK()}.")
         # print(f"func_types of server {self.server_id} are {self.func_types}.")

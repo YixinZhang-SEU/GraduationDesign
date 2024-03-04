@@ -2,25 +2,27 @@ import csv
 import config
 import os
 
-filename = os.path.join(config.REQ_PATH, 'functions.csv')
-func_dict = {}
-with open(filename, 'r') as rcsv:
-    reader = csv.DictReader(rcsv)
+func_path = os.path.join(config.REQ_PATH, 'func_types.csv')
+funcTypeDict = {}
+with open(func_path, 'r') as read_func:
+    reader = csv.reader(read_func)
+    next(reader)
     for row in reader:
-        value = []
-        value += [float(row['CPU']), float(row['Mem']), float(row['Cold_st']), float(row['Exec_time'])]
-        func_dict[row['Func_type']] = value
+        if row[0] not in funcTypeDict.keys():
+            funcTypeDict[row[0]] = []
+        funcTypeDict[row[0]] += [row[1], row[2]]
 
 
 class Function:
-    def __init__(self, func_type, belong_server, belong_wf, belong_task):
+    def __init__(self, belong_server, belong_wf, belong_task, func_type, exec_time, cpu, mem):
         self.func_type = func_type
-        self.cpu = func_dict[func_type][0]
-        self.mem = func_dict[func_type][1]
-        self.cold_st = func_dict[func_type][2]
-        self.exec_time = func_dict[func_type][3]
+        self.cpu = float(cpu)
+        self.mem = float(mem)
+        self.cold_st = float(funcTypeDict[func_type][0])
+        self.cache_mem = int(funcTypeDict[func_type][1])
+        self.exec_time = float(exec_time)
         self.start_time = 0
-        self.finish_time = func_dict[func_type][3]
+        self.finish_time = self.exec_time
         self.belong_server = belong_server
         self.belong_wf = belong_wf
         self.belong_task = belong_task

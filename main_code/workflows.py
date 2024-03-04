@@ -11,7 +11,7 @@ saveFile = os.path.join(config.SAVE_PATH, '1.csv')
 
 with open(saveFile, mode='w', newline='') as savefile:  
     writer = csv.writer(savefile)
-    writer.writerow(['wf_id', 'start_time', 'finish_time', 'exec_time'])
+    writer.writerow(['wf_id', 'start_time', 'finish_time', 'exec_time', 'wf_type'])
 
 
 def get_wfDict(wfFile):
@@ -33,13 +33,12 @@ def get_wfTypes(wfFile):
     return wf_types
 
 
-
 class Workflow:
-    def __init__(self, wf_id, server_id, arrival_time):
+    def __init__(self, wf_id, server_id, arrival_time, wf_type):
         wf_type_list = get_wfTypes(wfFile)
         wf_dict = get_wfDict(wfFile)
         self.wf_id = wf_id      # 工作流编号
-        self.wf_type = random.choice(wf_type_list)   # 工作流类型
+        self.wf_type = wf_type   # 工作流类型
         self.arrival_time = arrival_time      # 工作流到达时间
         self.belong_server = server_id
         self.deadline = arrival_time + int(wf_dict[self.wf_type][0])  # 截止期
@@ -51,12 +50,12 @@ class Workflow:
             all_rows = list(reader)
             for row in reversed(all_rows):
                 if row['WF_Type'] == self.wf_type:
-                    sucs = row['Successor'].split(',')
+                    sucs = row['Successor'].split()
                     successors = []
-                    if sucs[0] != '':
+                    if len(sucs) != 0:
                         for suc in sucs:
                             successors.append(self.tasks[suc])
-                    this_task = tasks.Task(self.belong_server, self.wf_id, row['Task_id'], row['Func_types'], successors, row['Predecessor'])
+                    this_task = tasks.Task(self.belong_server, self.wf_type, self.wf_id, row['Task_id'], successors, row['Predecessor'])
                     self.tasks[row['Task_id']] = this_task
         
         self.tasks = OrderedDict(reversed(self.tasks.items()))
@@ -71,5 +70,5 @@ class Workflow:
     def calSatisfaction(self, finish_time):
         with open(saveFile, mode='a', newline='') as savefile:
             writer = csv.writer(savefile)
-            writer.writerow([self.wf_id, self.arrival_time, finish_time, finish_time - self.arrival_time])
+            writer.writerow([self.wf_id, self.arrival_time, finish_time, finish_time - self.arrival_time, self.wf_type])
         # print(f"Workflow {self.wf_id} is completed, the time is {finish_time}.")

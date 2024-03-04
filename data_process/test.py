@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
+import csv
 
 # 画图
 
@@ -37,3 +38,26 @@ import os
 
 
 # 筛数据
+# task
+task_file = os.path.abspath('./data_process/tasks.csv')
+task_write = os.path.abspath('./data_process/tasks_filtered.csv')
+with open(task_file, 'r') as task_input_file, open(task_write, 'w') as task_output_file:
+    task_reader = csv.reader(task_input_file)
+    wf_writer = csv.writer(task_output_file)
+
+    header = ['WF_Type', 'Func_Num', 'Exec_Time']
+    wf_writer.writerow(header)
+    for row in task_reader:
+        wf_writer.writerow([row[2], row[1], int(row[6])-int(row[5])])
+
+# instance
+instance_file = os.path.abspath('./data_process/instances.csv')
+instance_write = os.path.abspath('./data_process/instance_filtered.csv')
+with open(instance_file, 'r') as instance_input_file, open(instance_write, 'w') as instance_output_file:
+    instance_reader = csv.reader(instance_input_file)
+    instance_writer = csv.writer(instance_output_file)
+
+    header = ['WF_Type', 'Task_id', 'Exec_Time', 'CPU', 'Mem']
+    instance_writer.writerow(header)
+    for row in instance_reader:
+        instance_writer.writerow([row[2], row[1][1], int(row[6])-int(row[5]), float(row[10])/100.0, float(row[12])*1000])

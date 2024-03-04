@@ -2,6 +2,8 @@ from clusters import Cluster
 from scheduler import Scheduler
 import config
 import random
+import pandas as pd
+import os
 
 # 构造服务器环境
 edge_num = config.EDGE_NUM
@@ -9,7 +11,12 @@ arrival_rate = config.ARRIVAL_RATE
 cluster = Cluster(edge_num)
 dists = cluster.dists
 
+# 调度器
 scheduler_instance = Scheduler()
+
+# 读取工作流到达数据
+server_wf_path = os.path.abspath('./main_code/dataset/server_wfs.csv')
+df = pd.read_csv(server_wf_path,header=None)
 
 
 # 主函数
@@ -23,12 +30,12 @@ if __name__ == "__main__":
         
         for i in range (1, edge_num + 1):
             
-            if t <= receive_t:
-                # 模拟工作流到达
-                if random.random() <= config.ARRIVAL_RATE:   # 工作流到达
-                    cluster.server_pool[i].receive_workflow(workflow_id, i, t)   # 接收
-                    # print(f"server {i} receives wf at time {t}, the wf_id is {workflow_id}.")
-                    workflow_id += 1
+            if t < receive_t:
+                if isinstance(df.iloc[t, i], str):
+                    for elem in df.iloc[t, i].split():  # 模拟工作流到达
+                        cluster.server_pool[i].receive_workflow(workflow_id, i, t, elem)   # 接收
+                        # print(f"server {i} receives wf at time {t}, the wf_id is {workflow_id}.")
+                        workflow_id += 1
 
             # 模拟全局运行任务
             # 执行结束的函数弹出服务器的执行队列
@@ -61,7 +68,9 @@ if __name__ == "__main__":
                     cluster.server_pool[i].workflow_queue[wf.wf_id].executing_tasks[task.task_id] = cluster.server_pool[task.belong_server].workflow_queue[task.belong_wf].tasks[task.task_id]
                     scheduler_instance.schedule(task, i, t, cluster)        # 调度器
                     cluster.server_pool[i].workflow_queue[wf.wf_id].tasks.popitem(last=False)[1]
-                # print(f"Time {t} tasks of wf {wf.wf_type} are {[task.task_id for task in wf.tasks]}.")
+                # print(f"Time {t} tasks of wf {wf.wf_type} are {[task.task_id for task in wf.tasks.values()]}.")
+                # print(f"Time {t} tasks_left of wf {wf.wf_type} is {wf.tasks_left}.")
+
 
                 # 查看工作流是否已经可以交付
                 if cluster.server_pool[i].workflow_queue[wf.wf_id].isCompleted() == True:
