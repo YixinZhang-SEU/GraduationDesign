@@ -18,23 +18,25 @@ class Cluster:
         # 云服务器
         dist = [0]
         for i in range (edge_num):
-            dist.append(10)
+            dist.append(config.CLOUD_EDGE)
         self.dists.append(dist)
-        dist = [10]
+        dist = []
+        dist.append(config.CLOUD_EDGE)
         # 边缘服务器
         rcsv = pd.read_csv(es_filename, nrows = edge_num)  
         for row in rcsv.itertuples():
-            for d in row[0:edge_num]:
+            for d in row[1:edge_num+1]:
                 dist.append(d)
             self.dists.append(dist)
-            dist = [10]
+            dist = []
+            dist.append(config.CLOUD_EDGE)
 
         # server_pool初始化
         # 云服务器
-        cloud_server = servers.Server(0, 10000, 10000000, config.FUNC_TYPES)
+        cloud_server = servers.Server(0, 100000, 100000000, config.FUNC_TYPES)
         self.server_pool.append(cloud_server)
         # 边缘服务器
         for i in range(1, edge_num + 1):
-            self.server_pool.append(servers.Server(i, random.uniform(1, 100), random.randint(10240, 40960), random.sample(config.FUNC_TYPES, random.randint(1, config.MAX_CACHE_NUM))))
+            self.server_pool.append(servers.Server(i, random.uniform(1000, 3000), random.randint(40000, 100000), random.sample(config.FUNC_TYPES, random.randint(1, config.MAX_CACHE_NUM))))
 
         

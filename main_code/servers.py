@@ -27,6 +27,8 @@ class Server:
         self.executing_queue = []   # 执行队列 [func(.obj)]
         self.workflow_queue = {}    # 接收到的工作流队列 {wf_id, wf(.obj)}
         self.func_types = {}                # 缓存的函数列表 {函数类型: 上一次使用时间}，-1表示从未使用过
+        self.containers = {}        # 容器列表
+        self.trans_queue = []       # 接收到的从别的地方传来的函数，需要加到这个list里
         for f_type in func_types:
             self.func_types[f_type] = -1
 

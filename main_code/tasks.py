@@ -41,7 +41,7 @@ class Task(object):
         # 将函数列表的元素转化成函数类对象
         func_id = 0
         for func_list in funcDict[wf_type][task_id]:
-            self.functions[func_id] = F.Function(self.belong_server, self.belong_wf, self.task_id, func_list[3], func_list[0], func_list[1], func_list[2])
+            self.functions[func_id] = F.Function(func_id, self.belong_server, self.belong_wf, self.task_id, func_list[3], func_list[0], func_list[1], func_list[2])
             func_id += 1
 
         self.functions_left = len(self.functions)        # 该任务的函数剩余未完成数量
