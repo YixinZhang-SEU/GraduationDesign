@@ -82,7 +82,7 @@ if __name__ == "__main__":
                         scheduler_instance.schedule(task, i, t, cluster)        # 调度器
                         cluster.server_pool[i].workflow_queue[wf.wf_id].tasks.popitem(last=False)[1]
                     # print(f"Time {t} tasks of wf {wf.wf_type} are {[task.task_id for task in wf.tasks.values()]}.")
-                    print(f"Time {t} tasks_left of wf {wf.wf_type} is {wf.tasks_left}.")
+                    # print(f"Time {t} tasks_left of wf {wf.wf_type} is {wf.tasks_left}.")
 
 
                     # 查看工作流是否已经可以交付
