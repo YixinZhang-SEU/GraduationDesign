@@ -7,11 +7,11 @@ import config
 
 wfFile = os.path.join(config.REQ_PATH, 'wf.csv')
 taskFile = os.path.join(config.REQ_PATH, 'tasks.csv')
-saveFile = os.path.join(config.SAVE_PATH, '2.csv')
+saveFile = os.path.join(config.SAVE_PATH, 'func_type_num.csv')
 
-# with open(saveFile, mode='w', newline='') as savefile:  
+# with open(saveFile, mode='a', newline='') as savefile:  
 #     writer = csv.writer(savefile)
-#     writer.writerow(['wf_id', 'start_time', 'finish_time', 'exec_time', 'wf_type', 'edge_num', 'arrival_rate', 'func_exp_time'])
+#     writer.writerow(['wf_id', 'start_time', 'finish_time', 'exec_time', 'wf_type', 'edge_num', 'arrival_rate', 'func_exp_time', 'func_type_num', 'max_cache_num'])
 
 
 def get_wfDict(wfFile):
@@ -70,5 +70,5 @@ class Workflow:
     def calSatisfaction(self, finish_time):
         with open(saveFile, mode='a', newline='') as savefile:
             writer = csv.writer(savefile)
-            writer.writerow([self.wf_id, self.arrival_time, finish_time, finish_time - self.arrival_time, self.wf_type, config.EDGE_NUM, config.ARRIVAL_RATE, config.FUNC_EXP_TIME, config.CLOUD_EDGE])
+            writer.writerow([self.wf_id, self.arrival_time, finish_time, finish_time - self.arrival_time, self.wf_type, config.EDGE_NUM, config.ARRIVAL_RATE, config.FUNC_EXP_TIME, config.FUNC_TYPE_NUM, config.MAX_CACHE_NUM])
         # print(f"Workflow {self.wf_id} is completed, the time is {finish_time}.")

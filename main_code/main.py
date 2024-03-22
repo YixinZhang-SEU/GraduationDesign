@@ -93,5 +93,5 @@ if __name__ == "__main__":
         
         if workflow_id != 0 and wf_completed == workflow_id:
             break
-        t += 1
+        t += 5
 

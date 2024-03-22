@@ -2,6 +2,7 @@ import os
 os.environ['PYDEVD_DISABLE_FILE_VALIDATION'] = '1'
 import subprocess
 import re
+import random
 
 # EDGE_NUM = 20       # 边缘服务器数量
 # ARRIVAL_RATE = 25
@@ -17,8 +18,10 @@ import re
 # 超参数列表
 EDGE_NUM = [10, 20, 30, 40, 50]
 ARRIVAL_RATE = [10, 20, 30, 40]
-FUNC_EXP_TIME = [5, 10, 15, 20]
+FUNC_EXP_TIME = [100, 200, 300, 400]
 CLOUD_EDGE = [50, 100, 150, 200, 250, 300]
+FUNC_TYPE_NUM = [20, 30, 40, 50, 60]
+
 
 
 # RECEIVE_SLOT = [10, 20, 30]
@@ -46,9 +49,12 @@ def update_config(param_name, new_value):
 # # 使用示例
 # update_config('ARRIVAL_RATE', 1000)
         
-for ce in CLOUD_EDGE:
-    update_config('CLOUD_EDGE', ce)
+for ftn in FUNC_TYPE_NUM:
+    update_config('FUNC_TYPE_NUM', ftn)
+    update_config('MAX_CACHE_NUM', random.randint(3, int(ftn / 3)))
+    for fet in FUNC_EXP_TIME:
+        update_config('FUNC_EXP_TIME', fet)
 
-    subprocess.run(['python', 'main_code/temp_main.py'])
-    subprocess.run(['python', 'main_code/dataset/generate_data.py'])
-    subprocess.run(['python', 'main_code/main.py'])
+        subprocess.run(['python', 'main_code/temp_main.py'])
+        subprocess.run(['python', 'main_code/dataset/generate_data.py'])
+        subprocess.run(['python', 'main_code/main.py'])

@@ -77,31 +77,62 @@ import config
 生成server_wfs.csv : 服务器到达工作流数量
 '''
 
-RECEIVE_SLOT = config.RECEIVE_SLOT
-EDGE_NUM = config.EDGE_NUM
-ARRIVAL_RATE = config.ARRIVAL_RATE
+# RECEIVE_SLOT = config.RECEIVE_SLOT
+# EDGE_NUM = config.EDGE_NUM
+# ARRIVAL_RATE = config.ARRIVAL_RATE
+
+# # 所有工作流类型
+# wf_list = []
+# wf_path = os.path.abspath('./main_code/dataset/wf.csv')
+# with open(wf_path, 'r') as read_wf:
+#     reader = csv.reader(read_wf)
+#     next(reader)
+#     for row in reader:
+#         wf_list.append(row[0])      # WF_Type字段
+
+# # 生成每个服务器每秒到达工作流数量，并随机生成工作流类型，存入wf_nums.csv
+# wf_nums_path = os.path.abspath('./main_code/dataset/server_wfs.csv')
+# with open(wf_nums_path, 'w') as write_wf_nums:
+#     writer = csv.writer(write_wf_nums)
+#     for i in range(RECEIVE_SLOT):
+#         row = []
+#         row.append(i)
+#         for server in range(EDGE_NUM):
+#             arrivals = np.random.poisson(ARRIVAL_RATE)
+#             tmp = ""
+#             for _ in range(arrivals):
+#                 tmp += random.choice(wf_list)  # 随机选择一种工作流
+#                 tmp += " "
+#             row.append(tmp)
+#         writer.writerow(row)
+
+
+'''
+生成func_types.csv
+'''
+FUNC_TYPE_NUM = config.FUNC_TYPE_NUM
 
 # 所有工作流类型
-wf_list = []
-wf_path = os.path.abspath('./main_code/dataset/wf.csv')
-with open(wf_path, 'r') as read_wf:
-    reader = csv.reader(read_wf)
-    next(reader)
-    for row in reader:
-        wf_list.append(row[0])      # WF_Type字段
+ft_path = os.path.abspath('./main_code/dataset/func_types.csv')
+cold_st_max = 200
+cache_mem_list = [128, 192, 256, 384, 512]
 
-# 生成每个服务器每秒到达工作流数量，并随机生成工作流类型，存入wf_nums.csv
-wf_nums_path = os.path.abspath('./main_code/dataset/server_wfs.csv')
-with open(wf_nums_path, 'w') as write_wf_nums:
-    writer = csv.writer(write_wf_nums)
-    for i in range(RECEIVE_SLOT):
+with open(ft_path, 'w') as write_ft:
+    writer = csv.writer(write_ft)
+    writer.writerow(['Func_type', 'Cold_st', 'Cache_mem'])
+    for i in range(FUNC_TYPE_NUM):
         row = []
-        row.append(i)
-        for server in range(EDGE_NUM):
-            arrivals = np.random.poisson(ARRIVAL_RATE)
-            tmp = ""
-            for _ in range(arrivals):
-                tmp += random.choice(wf_list)  # 随机选择一种工作流
-                tmp += " "
-            row.append(tmp)
+        row.append(i)       # 类型编号
+        row.append(random.randint(100, cold_st_max))  # 冷启动时间
+        row.append(random.choice(cache_mem_list))
         writer.writerow(row)
+
+
+
+# Func_type,Cold_st,Cache_mem
+# A,3.78,128
+# B,23.03,192
+# C,5.09,256
+# D,5.39,512
+# E,7.14,128
+# F,5.13,256
